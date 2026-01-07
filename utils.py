@@ -18,11 +18,16 @@ genai_model = os.getenv("MODEL_ID")
 
 client_secret_file_path = "./gmail_credentials/client_secret.json"
 
+# gmail_client = Gmail(
+#     client_secret_file = client_secret_file_path,
+#     creds_file="./gmail_credentials/login_creds.json"
+# )
+
 
 def read_new_mails():
     gmail_client = Gmail(
         client_secret_file=client_secret_file_path,
-        creds_file="./gmail_credentials/zaidk.dev@gmail.json"
+        creds_file="./gmail_credentials/login_creds.json"
     )
     messages = gmail_client.get_unread_inbox()
     # messages = gmail_client.get_messages()

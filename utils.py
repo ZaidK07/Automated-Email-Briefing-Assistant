@@ -4,22 +4,28 @@ import os
 from prompts import *
 import requests
 import json
+import time
 
 os.makedirs("./attachments",exist_ok=True)
+os.makedirs("./gmail_credentials",exist_ok=True)
 
 GOOGLE_GENAI_API_KEY = os.getenv("GOOGLE_GENAI_API_KEY")
 
 SLACK_WEBHOOK_URL = os.getenv("SLACK_WEBHOOK_URL")
 
 genai_client = genai.Client(api_key = GOOGLE_GENAI_API_KEY)
-genai_model = "gemini-2.5-flash"
+genai_model = os.getenv("MODEL_ID")
 
-gmail_client = Gmail(client_secret_file = "client_secret.json")
+client_secret_file_path = "./gmail_credentials/client_secret.json"
 
 
 def read_new_mails():
+    gmail_client = Gmail(
+        client_secret_file=client_secret_file_path,
+        creds_file="./gmail_credentials/zaidk.dev@gmail.json"
+    )
     messages = gmail_client.get_unread_inbox()
-    # messages = gmail_client.get_messages() 
+    # messages = gmail_client.get_messages()
 
     messages_list = []
     attachment_list = []
@@ -66,14 +72,20 @@ def summarise_email_list(emails_list, attachment_list = None):
         for file in uploaded_files:
             parts.append({"file_data": {"file_uri": file.uri, "mime_type": file.mime_type}})
         # parts.append({"text": get_summarise_email_list_prompt(email_list=emails_list)})
-        
+
         parts.append({"text": model_prompt})
         # print(parts)
-        
-        response = genai_client.models.generate_content(
-            model=genai_model,
-            contents=[{"role": "user", "parts": parts}]
-        )
+
+        for try_count in range(3):
+            try:
+                response = genai_client.models.generate_content(
+                    model=genai_model,
+                    contents=json.dumps([{"role": "user", "parts": parts}])
+                )
+                break
+            except Exception as e:
+                time.sleep(5)
+                print("Error in gemini api call!\n",e)
 
     return response.text
 

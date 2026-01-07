@@ -1,54 +1,54 @@
-Setting up Google Cloud, enable Gmail API, configure OAuth consent, and create OAuth credentials for your app.
-This steps are neccessary in order to run the following program successfully.
+# Automated Email Briefing Assistant
 
----
+An intelligent background assistant that monitors your Gmail inbox, generates human-like summaries using Google's Gemini AI, and delivers briefings directly to Slack or WhatsApp.
 
-1. Create a Google Cloud project  
-2. Enable the Gmail API  
-3. Configure OAuth consent screen  
-4. Create OAuth client credentials  
-5. Download `client_secret.json`  
-6. Add test users if you dont want to publish it
+## 🚀 Features
 
----
+*   **Smart Summarization:** Uses **Gemini 2.5 Flash** to create concise, executive-style briefings.
+*   **Attachment Analysis:** Downloads and incorporates context from email attachments into the summary.
+*   **Multi-Platform Delivery:** Supports notifications via **Slack Webhooks** and **WhatsApp API**.
+*   **Continuous Monitoring:** Automatically polls for and processes new unread emails.
 
-## 1. Create a Google Cloud Project
-1. Go to Google Cloud Console.
-2. Make a new project
+## 🛠️ Tech Stack
 
----
+*   **Language:** Python 3
+*   **AI Model:** Google Gemini 1.5/2.5 Flash (`google-genai`)
+*   **Email:** Gmail API (`simplegmail`)
+*   **Backend:** Flask / Flask-RESTful
 
-## 2. Enable the Gmail API
-1. In Console, open **APIs & Services → Library**.  
-2. Search **Gmail API → Enable**.  
+## ⚙️ Setup
 
----
+1.  **Clone the repository:**
+    ```bash
+    git clone <repository-url>
+    cd Automated-Email-Briefing-Assistant
+    ```
 
-## 3. Configure OAuth Consent Screen
-1. Go to **APIs & Services → OAuth consent screen**.  
-2. Choose **Internal** (for testing) or **External** (for publishing).
+2.  **Install dependencies:**
+    ```bash
+    pip install -r requirements.txt
+    ```
 
----
+3.  **Configure Environment:**
+    Create a `.env` file in the root directory:
+    ```env
+    GOOGLE_GENAI_API_KEY=your_gemini_api_key
+    SLACK_WEBHOOK_URL=your_slack_webhook_url
+    # Optional: For WhatsApp support
+    WHATSAPP_URL=your_whatsapp_url
+    AUTHORIZATION_HEADER=your_auth_token
+    WHATSAPP_PHONE_NO=target_phone_number
+    ```
 
-## 4. Create OAuth Client Credentials
-1. Go to **APIs & Services → Credentials → Create Credentials → OAuth client ID**. 
-2. Name it, click **Create**, then **Download JSON** (`client_secret.json`).  
+4.  **Gmail Credentials:**
+    *   Enable the Gmail API in your Google Cloud Console.
+    *   Download your OAuth `client_secret.json`.
+    *   Place it in: `gmail_credentials/client_secret.json`.
 
----
+## 🏃 Usage
 
-## 5. Final Steps
-- Use the Client ID and Secret in your OAuth library to request Gmail access.  
-- Add only the scopes you need.  
-
----
-
-After this all steps are done put your client_secret.json in project's root directory and then when running first time it will make you LogIn and after a successful login it will make a gmail_token.json in which your token will be stored.
-
-From now on whenever you run, this will use that account's gmail and read from them.
-
-You also need a slack webhook url + a gemini api key which you can get easily.
-Put that both into .env with correct env variable names.
-
-The setup is now finished and now when you run this, it fetches your new mails summarises them and forwards that to your selected slack channel.
-
-This all operations are automatic, and you can tweak how your mails get summarised and what response should be forwarded to your slack.
+Run the application:
+```bash
+python app.py
+```
+*On the first run, a browser window will open to authenticate your Google account.*
